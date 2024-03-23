@@ -1,12 +1,11 @@
 package com.example.service;
 
 import com.example.model.GroceryItem;
-import org.jvnet.hk2.annotations.Service;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Component
+@Service
 public interface GroceryItemService {
 
     public List<GroceryItem> getAllGroceryItems();

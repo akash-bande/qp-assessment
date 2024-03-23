@@ -3,18 +3,19 @@ package com.example.service.impl;
 import com.example.model.GroceryItem;
 import com.example.repository.GroceryItemRepository;
 import com.example.service.GroceryItemService;
-import org.jvnet.hk2.annotations.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
+@Service
 public class GroceryItemServiceImpl implements GroceryItemService {
 
     @Autowired
     GroceryItemRepository groceryItemRepository;
 
-//    public GroceryItemServiceImpl(GroceryItemRepository groceryItemRepository) {
-//        this.groceryItemRepository = groceryItemRepository;
-//    }
+    public GroceryItemServiceImpl(GroceryItemRepository groceryItemRepository) {
+        this.groceryItemRepository = groceryItemRepository;
+    }
 
     @Override
     public List<GroceryItem> getAllGroceryItems() {
@@ -23,7 +24,7 @@ public class GroceryItemServiceImpl implements GroceryItemService {
 
     @Override
     public GroceryItem getGroceryItem(String itemId) {
-        return groceryItemRepository.findById(itemId).get();
+        return groceryItemRepository.findById(itemId).orElse(null);
     }
 
     @Override
