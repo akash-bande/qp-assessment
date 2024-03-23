@@ -20,13 +20,20 @@ public class GroceryItemController {
     }
 
     @GetMapping("{itemId}")
-    public GroceryItem getGroceryItem(@PathVariable String itemId){
+    public GroceryItem getGroceryItem(@PathVariable long itemId){
         return groceryItemService.getGroceryItem(itemId);
     }
 
-//    public GroceryItem getGroceryItemById(String itemId){
-//        return groceryItemService.getGroceryItem(itemId);
-//    }
+    //@GetMapping("{itemName}")
+    public GroceryItem getGroceryItemByItemName(@PathVariable String itemName){
+
+        List<GroceryItem> searchedGroceryItems =  groceryItemService.getGroceryItemByItemName(itemName);
+        if(!searchedGroceryItems.isEmpty())
+            return searchedGroceryItems.get(0);
+        else{
+            return null;
+        }
+    }
 
     @GetMapping
     public List<GroceryItem> getAllGroceryItems(){
@@ -36,13 +43,13 @@ public class GroceryItemController {
     @PostMapping
     public String createAndUpadateGroceryItem(@RequestBody GroceryItem groceryItem){
 
-        //return groceryItemService.createGroceryItem(groceryItem);
-        GroceryItem searchedGroceryitem = getGroceryItem(groceryItem.getItemId());
+        GroceryItem searchedGroceryitem = getGroceryItemByItemName(groceryItem.getItemName());
         if(Objects.isNull(searchedGroceryitem)){
            return groceryItemService.createGroceryItem(groceryItem);
         }
         else {
-            return groceryItemService.updateGroceryItem(groceryItem);
+            GroceryItem updatedGroceryitem = searchedGroceryitem.mergeGroceryItem(groceryItem);
+            return groceryItemService.updateGroceryItem(updatedGroceryitem);
         }
     }
 }

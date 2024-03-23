@@ -1,14 +1,14 @@
 package com.example.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import org.springframework.util.StringUtils;
 
 @Entity
 @Table(name="grocery_items")
 public class GroceryItem {
     @Id
-    private String itemId;
+    @GeneratedValue
+    private long itemId;
     private String itemName;
     private int itemPrice;
     private int itemAvailableStock;
@@ -19,7 +19,7 @@ public class GroceryItem {
     public GroceryItem() {
     }
 
-    public GroceryItem(String itemId, String itemName, int itemPrice, int itemAvailableStock, String itemMeasuringUnit, boolean isItemDeleted) {
+    public GroceryItem(long itemId, String itemName, int itemPrice, int itemAvailableStock, String itemMeasuringUnit, boolean isItemDeleted) {
         this.itemId = itemId;
         this.itemName = itemName;
         this.itemPrice = itemPrice;
@@ -28,11 +28,11 @@ public class GroceryItem {
         this.isItemDeleted = isItemDeleted;
     }
 
-    public String getItemId() {
+    public long getItemId() {
         return itemId;
     }
 
-    public void setItemId(String itemId) {
+    public void setItemId(long itemId) {
         this.itemId = itemId;
     }
 
@@ -74,5 +74,33 @@ public class GroceryItem {
 
     public void setItemDeleted(boolean itemDeleted) {
         isItemDeleted = itemDeleted;
+    }
+    public GroceryItem mergeGroceryItem(GroceryItem newGroceryItem){
+            newGroceryItem.setItemId(this.getItemId());
+            if(StringUtils.isEmpty(newGroceryItem.getItemName())){
+                newGroceryItem.setItemName(this.getItemName());
+            }
+            if(StringUtils.isEmpty(newGroceryItem.getItemPrice())){
+                newGroceryItem.setItemPrice(this.getItemPrice());
+            }
+            if(StringUtils.isEmpty(newGroceryItem.getItemAvailableStock())){
+                newGroceryItem.setItemAvailableStock(this.getItemAvailableStock());
+            }
+            if(StringUtils.isEmpty(newGroceryItem.getItemMeasuringUnit())){
+                newGroceryItem.setItemMeasuringUnit(this.getItemMeasuringUnit());
+            }
+            return newGroceryItem;
+    }
+
+    @Override
+    public String toString() {
+        return "GroceryItem{" +
+                "itemId=" + itemId +
+                ", itemName='" + itemName + '\'' +
+                ", itemPrice=" + itemPrice +
+                ", itemAvailableStock=" + itemAvailableStock +
+                ", itemMeasuringUnit='" + itemMeasuringUnit + '\'' +
+                ", isItemDeleted=" + isItemDeleted +
+                '}';
     }
 }

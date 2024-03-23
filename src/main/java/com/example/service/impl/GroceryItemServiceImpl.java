@@ -23,12 +23,18 @@ public class GroceryItemServiceImpl implements GroceryItemService {
     }
 
     @Override
-    public GroceryItem getGroceryItem(String itemId) {
+    public GroceryItem getGroceryItem(long itemId) {
         return groceryItemRepository.findById(itemId).orElse(null);
     }
 
     @Override
+    public List<GroceryItem> getGroceryItemByItemName(String itemName) {
+        return groceryItemRepository.findByItemNameEquals(itemName);
+    }
+
+    @Override
     public String updateGroceryItem(GroceryItem groceryItem) {
+        System.out.println(groceryItem.toString());
         groceryItemRepository.save(groceryItem);
         return "Grocery item updated successfully.";
     }
@@ -40,7 +46,7 @@ public class GroceryItemServiceImpl implements GroceryItemService {
     }
 
     @Override
-    public String deleteGroceryItem(String itemId) {
+    public String deleteGroceryItem(long itemId) {
         GroceryItem groceryItem = getGroceryItem(itemId);
         groceryItem.setItemDeleted(true);
         groceryItemRepository.save(groceryItem);
