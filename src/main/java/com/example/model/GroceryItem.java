@@ -1,76 +1,30 @@
 package com.example.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 import org.springframework.util.StringUtils;
 
 @Entity
 @Table(name="grocery_items")
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
 public class GroceryItem {
     @Id
     @GeneratedValue
     private long itemId;
+    @NotNull(message = "Grocery name should not be blank")
     private String itemName;
+    @NotNull(message = "Grocery price should not be blank")
     private int itemPrice;
+    @NotNull(message = "Grocery stock should not be blank")
     private int itemAvailableStock;
     private String itemMeasuringUnit;
-
-    private boolean isItemDeleted;
-
-    public GroceryItem() {
-    }
-
-    public GroceryItem(long itemId, String itemName, int itemPrice, int itemAvailableStock, String itemMeasuringUnit, boolean isItemDeleted) {
-        this.itemId = itemId;
-        this.itemName = itemName;
-        this.itemPrice = itemPrice;
-        this.itemAvailableStock = itemAvailableStock;
-        this.itemMeasuringUnit = itemMeasuringUnit;
-        this.isItemDeleted = isItemDeleted;
-    }
-
-    public long getItemId() {
-        return itemId;
-    }
-
-    public void setItemId(long itemId) {
-        this.itemId = itemId;
-    }
-
-    public String getItemName() {
-        return itemName;
-    }
-
-    public void setItemName(String itemName) {
-        this.itemName = itemName;
-    }
-
-    public int getItemPrice() {
-        return itemPrice;
-    }
-
-    public void setItemPrice(int itemPrice) {
-        this.itemPrice = itemPrice;
-    }
-
-    public int getItemAvailableStock() {
-        return itemAvailableStock;
-    }
-
-    public void setItemAvailableStock(int itemAvailableStock) {
-        this.itemAvailableStock = itemAvailableStock;
-    }
-
-    public String getItemMeasuringUnit() {
-        return itemMeasuringUnit;
-    }
-
-    public void setItemMeasuringUnit(String itemMeasuringUnit) {
-        this.itemMeasuringUnit = itemMeasuringUnit;
-    }
-
-    public boolean isItemDeleted() {
-        return isItemDeleted;
-    }
+    private boolean isItemDeleted = false;
 
     public void setItemDeleted(boolean itemDeleted) {
         isItemDeleted = itemDeleted;
@@ -80,10 +34,10 @@ public class GroceryItem {
             if(StringUtils.isEmpty(newGroceryItem.getItemName())){
                 newGroceryItem.setItemName(this.getItemName());
             }
-            if(StringUtils.isEmpty(newGroceryItem.getItemPrice())){
+            if(StringUtils.isEmpty(String.valueOf(newGroceryItem.getItemPrice()))){
                 newGroceryItem.setItemPrice(this.getItemPrice());
             }
-            if(StringUtils.isEmpty(newGroceryItem.getItemAvailableStock())){
+            if(StringUtils.isEmpty(String.valueOf(newGroceryItem.getItemAvailableStock()))){
                 newGroceryItem.setItemAvailableStock(this.getItemAvailableStock());
             }
             if(StringUtils.isEmpty(newGroceryItem.getItemMeasuringUnit())){

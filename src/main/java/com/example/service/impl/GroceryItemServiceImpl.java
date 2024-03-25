@@ -15,6 +15,7 @@ public class GroceryItemServiceImpl implements GroceryItemService {
 
     public GroceryItemServiceImpl(GroceryItemRepository groceryItemRepository) {
         this.groceryItemRepository = groceryItemRepository;
+        loadGroceryItems();
     }
 
     @Override
@@ -51,5 +52,18 @@ public class GroceryItemServiceImpl implements GroceryItemService {
         groceryItem.setItemDeleted(true);
         groceryItemRepository.save(groceryItem);
         return "Grocery item deleted successfully.";
+    }
+
+    private void loadGroceryItems(){
+        GroceryItem groceryItem1 = new GroceryItem(1,"Potato",25,350,"KG",false);
+        GroceryItem groceryItem2 = new GroceryItem(2,"Tomato",30,200,"KG",false);
+        GroceryItem groceryItem3 = new GroceryItem(3,"Onion",20,600,"KG",false);
+        GroceryItem groceryItem4 = new GroceryItem(4,"Sugar",40,100,"KG",false);
+        GroceryItem groceryItem5 = new GroceryItem(5,"Rice",60,50,"KG",false);
+        groceryItemRepository.save(groceryItem1);
+        groceryItemRepository.save(groceryItem2);
+        groceryItemRepository.save(groceryItem3);
+        groceryItemRepository.save(groceryItem4);
+        groceryItemRepository.save(groceryItem5);
     }
 }
