@@ -1,11 +1,14 @@
 package com.example.controller;
 
+import com.example.exception.UserAlreadyExistsException;
 import com.example.model.User;
 import com.example.service.UserService;
 import com.example.service.impl.UserDetailsServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,9 +30,12 @@ public class UserController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
     @PostMapping("/admin/adduser")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public String addUserByAdmin(@RequestBody @Valid User user){
+    public String addUserByAdmin(@RequestBody @Valid User user) throws UserAlreadyExistsException {
     user.setPassword(passwordEncoder.encode(user.getPassword()));
     userService.addGroceryUser(user);
     return "User added succesfully By admin";
@@ -44,26 +50,32 @@ public class UserController {
     }
 
     @PostMapping("/admin/login")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public String adminUserLogin(@RequestBody @Valid User user){
+    public String adminUserLogin(@RequestBody @Valid User user) throws UserAlreadyExistsException {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.addGroceryUser(user);
         return "Signup successfully done..!";
     }
 
     @PostMapping("/user/signup")
-    public String addUser(@RequestBody @Valid User user){
+    public String addUser(@RequestBody @Valid User user) throws UserAlreadyExistsException {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.addGroceryUser(user);
         return "Signup successfully done..!";
     }
 
     @PostMapping("/user/login")
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('GROCERY_USER')")
-    public String groceryUserLogin(@RequestBody @Valid User user){
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userService.addGroceryUser(user);
-        return "Signup successfully done..!";
+    public String groceryUserLogin(@RequestBody @Valid User user) {
+        User alreadyloggedinUser = getLoggedInUserInfo();
+        if(alreadyloggedinUser==null) {
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    user.getUserEmail(), user.getPassword()));
+            System.out.println(authentication.getDetails());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            return "User logged-in successfully!.";
+        }
+        else {
+            return "User : "+alreadyloggedinUser.getUserFirstName()+"Already logged in";
+        }
     }
 
     public User getLoggedInUserInfo(){

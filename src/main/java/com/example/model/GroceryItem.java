@@ -45,16 +45,4 @@ public class GroceryItem {
             }
             return newGroceryItem;
     }
-
-    @Override
-    public String toString() {
-        return "GroceryItem{" +
-                "itemId=" + itemId +
-                ", itemName='" + itemName + '\'' +
-                ", itemPrice=" + itemPrice +
-                ", itemAvailableStock=" + itemAvailableStock +
-                ", itemMeasuringUnit='" + itemMeasuringUnit + '\'' +
-                ", isItemDeleted=" + isItemDeleted +
-                '}';
-    }
 }
