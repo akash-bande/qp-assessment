@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,9 +45,17 @@ public class UserController {
     @PostMapping("/admin/addadminuser")
     @PreAuthorize("hasAuthority('ADMIN')")
     public String addAdminUserByAdmin(@RequestBody @Valid User user){
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userService.addAdminUser(user);
-        return "Admin User added succesfully..!";
+        User alreadyloggedinUser = getLoggedInUserInfo();
+        if(alreadyloggedinUser==null) {
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    user.getUserEmail(), user.getPassword()));
+            System.out.println(authentication.getDetails());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            return "User logged-in successfully..!";
+        }
+        else {
+            return "User : "+alreadyloggedinUser.getUserFirstName()+"Already logged in";
+        }
     }
 
     @PostMapping("/admin/login")
@@ -66,10 +75,12 @@ public class UserController {
     @PostMapping("/user/login")
     public String groceryUserLogin(@RequestBody @Valid User user) {
         User alreadyloggedinUser = getLoggedInUserInfo();
+        System.out.println("already logged user" +alreadyloggedinUser);
         if(alreadyloggedinUser==null) {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     user.getUserEmail(), user.getPassword()));
-            System.out.println(authentication.getDetails());
+            System.out.println(authentication.isAuthenticated());
+            System.out.println("Pricipal : "+((UserDetails)authentication.getPrincipal()).getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
             return "User logged-in successfully!.";
         }
@@ -78,16 +89,27 @@ public class UserController {
         }
     }
 
+    @GetMapping("/user/getmyinfo")
+    //@PreAuthorize("hasAuthority('GROCERY_USER') or hasAuthority('ADMIN')")
     public User getLoggedInUserInfo(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication!= null && authentication.getPrincipal() instanceof UserDetails){
-            UserDetails currentUser = (UserDetails) authentication.getPrincipal();
-            User user=userService.getUserByEmail(currentUser.getUsername());
-            if(user!=null)
-                return user;
-            else
-                throw new UsernameNotFoundException("User does not exists with Email: "+currentUser.getUsername());
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            System.out.println("User details "+authentication.getPrincipal());
+            System.out.println(authentication.isAuthenticated());
+            if(authentication!= null && authentication.getPrincipal() instanceof UserDetails){
+                UserDetails currentUser = (UserDetails) authentication.getPrincipal();
+                User user=userService.getUserByEmail(currentUser.getUsername());
+                System.out.println(user);
+                if(user!=null)
+                    return user;
+                else
+                    throw new UsernameNotFoundException("User does not exists with Email: "+currentUser.getUsername());
+            }
         }
+        catch (Exception e){
+            System.out.println(e.getStackTrace());
+        }
+
         return null;
     }
 

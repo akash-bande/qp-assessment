@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
+
 @Entity
 @Table(name="grocery_items")
 @AllArgsConstructor
@@ -15,7 +17,8 @@ import org.springframework.util.StringUtils;
 @ToString
 public class GroceryItem {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    @Column(name = "item_id")
     private long itemId;
     @NotNull(message = "Grocery name should not be blank")
     private String itemName;
@@ -23,7 +26,7 @@ public class GroceryItem {
     private int itemPrice;
     @NotNull(message = "Grocery stock should not be blank")
     private int itemAvailableStock;
-    private String itemMeasuringUnit;
+    @JsonIgnore
     private boolean isItemDeleted = false;
 
     public void setItemDeleted(boolean itemDeleted) {
@@ -39,9 +42,6 @@ public class GroceryItem {
             }
             if(StringUtils.isEmpty(String.valueOf(newGroceryItem.getItemAvailableStock()))){
                 newGroceryItem.setItemAvailableStock(this.getItemAvailableStock());
-            }
-            if(StringUtils.isEmpty(newGroceryItem.getItemMeasuringUnit())){
-                newGroceryItem.setItemMeasuringUnit(this.getItemMeasuringUnit());
             }
             return newGroceryItem;
     }

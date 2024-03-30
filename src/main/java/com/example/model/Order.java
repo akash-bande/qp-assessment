@@ -1,11 +1,13 @@
 package com.example.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.example.controller.GroceryItemController;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name="order_details")
 @AllArgsConstructor
@@ -15,8 +17,17 @@ import java.util.ArrayList;
 @ToString
 public class Order {
     @Id
-    private String orderId;
-    private String userId;
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    @Column(name = "order_id")
+    private long orderId;
     private String orderStatus;
-    private ArrayList<CartItems> cartItems;
+    private int totalOrderValue;
+
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
+    private List<CartItems> cartItems;
+
+    @ManyToOne()
+    @JsonIgnore
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    private User user;
 }

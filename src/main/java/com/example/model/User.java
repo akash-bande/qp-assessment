@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Table(name="user_info")
 @NoArgsConstructor
@@ -15,8 +17,9 @@ import lombok.*;
 @ToString
 public class User {
    @Id
-   @GeneratedValue
-   private int userId;
+   @GeneratedValue(strategy=GenerationType.AUTO)
+   @Column(name = "user_id")
+   private long userId;
    private String userRole;//ADMIN,GROCERY_USER
    @NotNull(message = "user first name should not be blank")
    private String userFirstName;

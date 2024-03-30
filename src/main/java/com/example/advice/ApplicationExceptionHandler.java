@@ -3,6 +3,7 @@ package com.example.advice;
 import com.example.exception.GroceryItemNotAvailableException;
 import com.example.exception.UserAlreadyExistsException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -33,9 +34,17 @@ public class ApplicationExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
-    public Map<String,String> handleUserAlreadyExists(MethodArgumentNotValidException ex){
+    public Map<String,String> handleUserAlreadyExists(Exception ex){
         Map<String, String> errorMessages = new HashMap<>();
-        errorMessages.put("Error Message",ex.getMessage());
+        errorMessages.put("Error Message","User already exists");
+        return errorMessages;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public Map<String,String> handleUserNotFound(Exception ex){
+        Map<String, String> errorMessages = new HashMap<>();
+        errorMessages.put("Error Message","User not Found");
         return errorMessages;
     }
 

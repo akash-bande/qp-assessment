@@ -1,9 +1,10 @@
 package com.example.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Table(name="cart_item_details")
@@ -14,13 +15,19 @@ import lombok.*;
 @ToString
 public class CartItems {
     @Id
-    private String cartEntryId;
-    private String orderId;
-    private String groceryItemId;
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    @Column(name = "cart_entry_id")
+    private long cartEntryId;
     private int quantity;
 
-    public String getOrderId() {
-        return orderId;
-    }
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "order_id", referencedColumnName = "order_id")
+    private Order order;
+
+    @OneToOne
+    @JoinColumn(name = "item_id", referencedColumnName = "item_id")
+    private GroceryItem groceryItem;
+
 
 }
